@@ -61,6 +61,53 @@ Format: [Version] - [Date & Time]
 - `MarketIndexCard` value display now uses `FlashingPriceText` instead of static `Text`
 - `StockDetailScreen` `PriceHeader` now uses `FlashingPriceText` instead of static `Text`
 - `PortfolioScreen` `PositionCard` market value display now uses `FlashingPriceText` instead of static `Text`
+- `libs.versions.toml` — added `turbine = "1.1.0"`, `coroutines-test` and `turbine` library aliases
+- `app/build.gradle.kts` — added `testImplementation` entries for `coroutines-test` and `turbine`
+
+### Files Changed
+
+**New Files (19)**
+
+| File | Purpose |
+|------|---------|
+| `presentation/components/PriceFlash.kt` | `TickDirection` enum, `rememberTickDirection`, `FlashingPriceText` composable |
+| `data/remote/model/FinnhubModels.kt` | API response DTOs with `@SerializedName` for Finnhub's single-letter keys |
+| `data/remote/FinnhubApi.kt` | Retrofit service — quote, candles, company profile, symbol search |
+| `data/remote/FinnhubWebSocket.kt` | OkHttp WebSocket `callbackFlow` streaming Finnhub trades in real time |
+| `data/remote/FinnhubDataSource.kt` | Maps Finnhub REST + WebSocket to domain models, caches profiles |
+| `di/NetworkModule.kt` | Hilt module — OkHttpClient, Retrofit, FinnhubApi, FinnhubWebSocket singletons |
+| `data/DataSourceConfig.kt` | `DataSourceMode` enum (SIMULATED / LIVE / HYBRID), Strategy Pattern config |
+| `test/.../StockQuoteTest.kt` | 5 unit tests — isPositive, spread, timestamp |
+| `test/.../PositionTest.kt` | 9 unit tests — marketValue, costBasis, PnL, PnLPercent, isProfit |
+| `test/.../PortfolioTest.kt` | 6 unit tests — totals, empty portfolio |
+| `test/.../OrderTest.kt` | 12 unit tests — remaining qty, isFilled, isActive, enum completeness |
+| `test/.../CandlestickTest.kt` | 8 unit tests — bullish/bearish, body, wicks, doji |
+| `test/.../OrderBookTest.kt` | 5 unit tests — spread, spreadPercent |
+| `test/.../MarketDataModelTest.kt` | 7 unit tests — index/sector/watchlist isPositive |
+| `test/.../MarketSimulatorTest.kt` | 33 unit tests — quotes, streaming, candles, orderbook, search, orders, portfolio |
+| `test/.../FormattersTest.kt` | 18 unit tests — all formatting functions |
+| `test/.../OrderEntryUiStateTest.kt` | 8 unit tests — estimatedCost for all order types |
+| `test/.../DataSourceConfigTest.kt` | 4 unit tests — default mode, switching, enum completeness |
+| `test/.../FinnhubDataSourceMappingTest.kt` | 8 unit tests — interval-to-resolution mapping |
+
+**Modified Files (7)**
+
+| File | Change |
+|------|--------|
+| `data/repository/MarketDataRepositoryImpl.kt` | Rewritten — now injects both Simulator & FinnhubDataSource, three-way routing with hybrid fallback |
+| `presentation/components/StockTickerCard.kt` | Price `Text` → `FlashingPriceText` |
+| `presentation/watchlist/WatchlistScreen.kt` | Price `Text` → `FlashingPriceText` |
+| `presentation/dashboard/DashboardScreen.kt` | Index value `Text` → `FlashingPriceText` |
+| `presentation/stockdetail/StockDetailScreen.kt` | Price header `Text` → `FlashingPriceText` |
+| `presentation/portfolio/PortfolioScreen.kt` | Position value `Text` → `FlashingPriceText` |
+| `gradle/libs.versions.toml` | Added turbine, coroutines-test entries |
+| `app/build.gradle.kts` | Added test dependencies |
+
+### Build & Test Results
+
+- `gradlew assembleDebug` — **BUILD SUCCESSFUL**
+- `gradlew testDebugUnitTest` — **123 tests, 0 failures, 0 errors** across 12 test suites
+- APK installed on emulator (Medium_Phone_API_36) — **zero crashes verified via logcat**
 
 ### Removed
 
