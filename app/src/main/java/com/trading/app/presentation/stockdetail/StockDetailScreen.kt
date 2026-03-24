@@ -204,6 +204,7 @@ private fun TradeButton(symbol: String, price: Double, onTrade: () -> Unit) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .navigationBarsPadding()
                 .padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {

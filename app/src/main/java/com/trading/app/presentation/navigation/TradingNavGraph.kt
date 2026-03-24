@@ -6,6 +6,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import com.trading.app.presentation.dashboard.DashboardScreen
 import com.trading.app.presentation.orderentry.OrderEntryScreen
 import com.trading.app.presentation.portfolio.PortfolioScreen
@@ -44,7 +45,8 @@ fun TradingNavGraph(navController: NavHostController) {
         }
         composable(
             route = Screen.StockDetail.route,
-            arguments = listOf(navArgument("symbol") { type = NavType.StringType })
+            arguments = listOf(navArgument("symbol") { type = NavType.StringType }),
+            deepLinks = listOf(navDeepLink { uriPattern = "trading://stock/{symbol}" })
         ) {
             StockDetailScreen(
                 onBack = { navController.popBackStack() },
@@ -53,7 +55,8 @@ fun TradingNavGraph(navController: NavHostController) {
         }
         composable(
             route = Screen.OrderEntry.route,
-            arguments = listOf(navArgument("symbol") { type = NavType.StringType })
+            arguments = listOf(navArgument("symbol") { type = NavType.StringType }),
+            deepLinks = listOf(navDeepLink { uriPattern = "trading://order/{symbol}" })
         ) {
             OrderEntryScreen(
                 onBack = { navController.popBackStack() }

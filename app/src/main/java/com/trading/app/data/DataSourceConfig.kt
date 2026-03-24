@@ -21,5 +21,5 @@ enum class DataSourceMode {
  * Change this to LIVE or HYBRID when a real Finnhub API key is configured.
  */
 object DataSourceConfig {
-    var mode: DataSourceMode = DataSourceMode.HYBRID
+    var mode: DataSourceMode = DataSourceMode.SIMULATED
 }

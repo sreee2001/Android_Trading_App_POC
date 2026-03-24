@@ -59,7 +59,8 @@ class FinnhubDataSource @Inject constructor(
                     )
                 )
             } catch (e: Exception) {
-                // silently retry on failure — next poll will try again
+                // On first failure, throw so HYBRID .catch{} can fall back to simulator
+                throw e
             }
             delay(3000) // Finnhub free tier: 60 calls/min, so ~3s per symbol is safe
         }
