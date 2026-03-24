@@ -6,6 +6,68 @@ Format: [Version] - [Date & Time]
 
 ---
 
+## [0.2.0] - 2026-03-24 13:00 UTC
+
+### Added
+
+**Price Flash Animations**
+
+- Created `PriceFlash.kt` composable component implementing real-time price tick flash animation — prices briefly flash green on uptick and red on downtick, then fade back, mimicking production trading terminal behavior
+- Added `rememberTickDirection` composable that tracks previous price and computes `TickDirection` (UP, DOWN, NONE) on each update
+- Added `FlashingPriceText` composable with animated background flash and text color transition using `animateColorAsState` with configurable timing (100ms flash-in, 500ms fade-out)
+- Integrated `FlashingPriceText` into `StockTickerCard` — top movers list now flashes on every price update
+- Integrated `FlashingPriceText` into `WatchlistScreen` `WatchlistItemRow` — watchlist prices flash on tick
+- Integrated `FlashingPriceText` into `DashboardScreen` `MarketIndexCard` — S&P 500, NASDAQ, DOW index values flash on update
+- Integrated `FlashingPriceText` into `StockDetailScreen` `PriceHeader` — main stock detail price header flashes on tick
+- Integrated `FlashingPriceText` into `PortfolioScreen` `PositionCard` — portfolio position market values flash on price change
+
+**Finnhub Real API Integration**
+
+- Created `FinnhubModels.kt` with complete API response models: `FinnhubTradeMessage`, `FinnhubTrade`, `FinnhubQuoteResponse`, `FinnhubCandleResponse`, `FinnhubCompanyProfile`, `FinnhubSearchResponse`, `FinnhubSearchResult` — all with Gson `@SerializedName` annotations matching Finnhub's single-letter JSON keys
+- Created `FinnhubApi.kt` Retrofit service interface with endpoints for quote, candles, company profile, and symbol search
+- Created `FinnhubWebSocket.kt` implementing real-time trade streaming via OkHttp WebSocket to `wss://ws.finnhub.io`, with automatic symbol subscription/unsubscription, JSON parsing of trade messages, and proper cleanup on Flow cancellation using `callbackFlow`
+- Created `FinnhubDataSource.kt` that combines REST polling and WebSocket streaming, maps Finnhub responses to domain models, caches company profiles, handles interval-to-resolution mapping, and computes appropriate time ranges for candlestick requests
+- Created `NetworkModule.kt` Hilt DI module providing `OkHttpClient` (with auth interceptor injecting API token, logging interceptor, and WebSocket keep-alive ping interval), `Retrofit` instance, `FinnhubApi` service, and `FinnhubWebSocket` — all as singletons
+- Created `DataSourceConfig.kt` with `DataSourceMode` enum (SIMULATED, LIVE, HYBRID) implementing the Strategy Pattern for data source selection, defaulting to HYBRID mode
+
+**Strategy Pattern in MarketDataRepository**
+
+- Rewrote `MarketDataRepositoryImpl` to accept both `MarketSimulator` and `FinnhubDataSource` as dependencies
+- Implemented three-way routing based on `DataSourceConfig.mode`: SIMULATED routes entirely to local simulator, LIVE routes to Finnhub, HYBRID tries Finnhub first and falls back to simulator on any error
+- Added graceful fallback logic using Kotlin Flow `catch` operator — ensures the app always shows data even when network fails (critical for trading UIs)
+- Order book, market indices, sector performance, and top movers always use simulator (Finnhub free tier doesn't provide these)
+
+**Unit Test Suite (123 tests)**
+
+- Created `StockQuoteTest` (5 tests) — isPositive, spread calculation, timestamp default
+- Created `PositionTest` (9 tests) — marketValue, costBasis, unrealizedPnL, unrealizedPnLPercent, isProfit for profit/loss/break-even/zero-cost scenarios
+- Created `PortfolioTest` (6 tests) — totalMarketValue, totalCostBasis, totalUnrealizedPnL, totalValue, buyingPower, empty portfolio
+- Created `OrderTest` (12 tests) — remainingQuantity, isFilled for all statuses, isActive for all 7 order statuses, enum completeness for OrderType and TimeInForce
+- Created `CandlestickTest` (8 tests) — isBullish, body, upperWick, lowerWick, doji candle
+- Created `OrderBookTest` (5 tests) — spread calculation with/without bids/asks, spreadPercent
+- Created `MarketDataModelTest` (7 tests) — MarketIndex.isPositive, SectorPerformance.isPositive, WatchlistItem.isPositive
+- Created `MarketSimulatorTest` (33 tests) — symbol catalog, quote generation (valid, changing prices, high>=low, bid<ask), streaming (quote, quotes, indices, sectors), candlestick generation (counts, timestamps sequential), order book (valid structure, bid/ask sorting), search (symbol, name, case-insensitive, empty), order execution (market buy, cash reduction, sell without position, buy+sell roundtrip, exceeding buying power, zero/negative quantity, unknown symbol, order history, position accumulation), portfolio (initial cash, empty portfolio, after trades), top movers sorting
+- Created `FormattersTest` (18 tests) — formatPrice, formatChange, formatPercent, formatVolume (millions/billions/thousands/small), formatMarketCap (trillions/billions/millions), formatCurrency, formatTimestamp
+- Created `OrderEntryUiStateTest` (8 tests) — estimatedCost for market/limit/stop/stop-limit/trailing-stop orders, empty/non-numeric quantity, limit price fallback
+- Created `DataSourceConfigTest` (4 tests) — default mode, mode switching, all modes defined
+- Created `FinnhubDataSourceMappingTest` (8 tests) — interval-to-resolution mapping for all 7 intervals plus fallback
+- Added `coroutines-test` and `turbine` test dependencies to version catalog and app build file for Flow testing
+
+### Changed
+
+- `MarketDataRepositoryImpl` now depends on both `MarketSimulator` and `FinnhubDataSource` instead of simulator only — implements Strategy Pattern with hybrid fallback
+- `StockTickerCard` price display now uses `FlashingPriceText` instead of static `Text`
+- `WatchlistItemRow` price display now uses `FlashingPriceText` instead of static `Text`
+- `MarketIndexCard` value display now uses `FlashingPriceText` instead of static `Text`
+- `StockDetailScreen` `PriceHeader` now uses `FlashingPriceText` instead of static `Text`
+- `PortfolioScreen` `PositionCard` market value display now uses `FlashingPriceText` instead of static `Text`
+
+### Removed
+
+- Nothing
+
+---
+
 ## [0.1.1] - 2026-03-24 11:30 UTC
 
 ### Added

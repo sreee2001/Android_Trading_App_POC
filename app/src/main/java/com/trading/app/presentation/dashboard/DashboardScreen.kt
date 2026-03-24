@@ -20,6 +20,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.trading.app.domain.model.MarketIndex
 import com.trading.app.domain.model.SectorPerformance
+import com.trading.app.presentation.components.FlashingPriceText
 import com.trading.app.presentation.components.Formatters
 import com.trading.app.presentation.components.StockTickerCard
 import com.trading.app.presentation.theme.*
@@ -114,11 +115,14 @@ private fun MarketIndexCard(index: MarketIndex) {
     ) {
         Text(index.name, fontSize = 12.sp, color = TextSecondary, fontWeight = FontWeight.Medium)
         Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            Formatters.formatPrice(index.value),
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            color = TextPrimary
+        FlashingPriceText(
+            price = index.value,
+            formattedPrice = Formatters.formatPrice(index.value),
+            textStyle = androidx.compose.ui.text.TextStyle(
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold
+            ),
+            textColor = TextPrimary
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(

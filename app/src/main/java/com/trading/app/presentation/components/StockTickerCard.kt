@@ -75,11 +75,14 @@ fun StockTickerCard(
         Spacer(modifier = Modifier.width(12.dp))
 
         Column(horizontalAlignment = Alignment.End) {
-            Text(
-                text = Formatters.formatPrice(quote.lastPrice),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = TextPrimary
+            FlashingPriceText(
+                price = quote.lastPrice,
+                formattedPrice = Formatters.formatPrice(quote.lastPrice),
+                textStyle = androidx.compose.ui.text.TextStyle(
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold
+                ),
+                textColor = TextPrimary
             )
             Text(
                 text = "${Formatters.formatChange(quote.change)} (${Formatters.formatPercent(quote.changePercent)})",

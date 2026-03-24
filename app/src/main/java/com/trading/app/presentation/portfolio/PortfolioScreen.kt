@@ -20,6 +20,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.trading.app.domain.model.Order
 import com.trading.app.domain.model.OrderStatus
 import com.trading.app.domain.model.Position
+import com.trading.app.presentation.components.FlashingPriceText
 import com.trading.app.presentation.components.Formatters
 import com.trading.app.presentation.components.PortfolioSummaryCard
 import com.trading.app.presentation.theme.*
@@ -121,7 +122,15 @@ private fun PositionCard(position: Position, onClick: () -> Unit) {
             Text("Avg: ${Formatters.formatPrice(position.averageCost)}", fontSize = 11.sp, color = TextTertiary)
         }
         Column(horizontalAlignment = Alignment.End) {
-            Text(Formatters.formatCurrency(position.marketValue), fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = TextPrimary)
+            FlashingPriceText(
+                price = position.currentPrice,
+                formattedPrice = Formatters.formatCurrency(position.marketValue),
+                textStyle = androidx.compose.ui.text.TextStyle(
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.SemiBold
+                ),
+                textColor = TextPrimary
+            )
             Text(
                 "${Formatters.formatChange(position.unrealizedPnL)} (${Formatters.formatPercent(position.unrealizedPnLPercent)})",
                 fontSize = 12.sp,

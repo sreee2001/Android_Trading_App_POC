@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.trading.app.presentation.components.FlashingPriceText
 import com.trading.app.presentation.components.Formatters
 import com.trading.app.presentation.components.SparklineChart
 import com.trading.app.presentation.components.StockTickerCard
@@ -160,11 +161,14 @@ private fun WatchlistItemRow(
         }
 
         Column(horizontalAlignment = Alignment.End) {
-            Text(
-                Formatters.formatPrice(item.lastPrice),
-                fontSize = 15.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = TextPrimary
+            FlashingPriceText(
+                price = item.lastPrice,
+                formattedPrice = Formatters.formatPrice(item.lastPrice),
+                textStyle = androidx.compose.ui.text.TextStyle(
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.SemiBold
+                ),
+                textColor = TextPrimary
             )
             Text(
                 "${Formatters.formatChange(item.change)} (${Formatters.formatPercent(item.changePercent)})",

@@ -127,10 +127,11 @@ fun StockDetailScreen(
 @Composable
 private fun PriceHeader(quote: com.trading.app.domain.model.StockQuote) {
     Column {
-        Text(
-            text = Formatters.formatCurrency(quote.lastPrice),
-            style = TradingTypography.priceDisplay,
-            color = TextPrimary
+        FlashingPriceText(
+            price = quote.lastPrice,
+            formattedPrice = Formatters.formatCurrency(quote.lastPrice),
+            textStyle = TradingTypography.priceDisplay,
+            textColor = TextPrimary
         )
         Spacer(modifier = Modifier.height(4.dp))
         PriceChangeIndicator(change = quote.change, changePercent = quote.changePercent)
