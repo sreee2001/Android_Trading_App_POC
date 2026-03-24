@@ -11,19 +11,34 @@ This project is built to showcase:
 
 ## Screenshots
 
-All screenshots are in `screenshots/`:
-- `01_dashboard.png` — dashboard with market status, indices, sector heatmap, top movers
-- `02_watchlist.png` — watchlist with symbol rows and live updates
-- `03_portfolio.png` — portfolio summary, positions, and P&L
-- `04_stock_detail.png` — stock detail with candlestick chart
-- `05_stock_detail_orderbook.png` — order book and market depth view
-- `06_order_entry.png` — order entry screen (top)
-- `07_order_entry_summary.png` — order entry summary/actions (bottom)
+### Dashboard
+![Dashboard](screenshots/01_dashboard.png)
+
+### Watchlist
+![Watchlist](screenshots/02_watchlist.png)
+
+### Portfolio
+![Portfolio](screenshots/03_portfolio.png)
+
+### Stock Detail (Chart)
+![Stock Detail Chart](screenshots/04_stock_detail.png)
+
+### Stock Detail (Order Book & Depth)
+![Stock Detail Order Book](screenshots/05_stock_detail_orderbook.png)
+
+### Order Entry (Top)
+![Order Entry Top](screenshots/06_order_entry.png)
+
+### Order Entry (Summary)
+![Order Entry Summary](screenshots/07_order_entry_summary.png)
 
 ## Video
 
-Demo recording:
-- `screenshots/demo.mp4`
+<video controls width="360" src="screenshots/demo.mp4">
+   Your browser or Markdown preview does not support embedded video.
+</video>
+
+[Open video directly](screenshots/demo.mp4)
 
 ## What’s in here
 
