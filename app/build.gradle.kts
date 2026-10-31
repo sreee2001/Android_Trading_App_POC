@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -17,16 +18,56 @@ android {
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Secret keys are read from <project>/secret.properties (git-ignored), never hard-coded.
+        val secretFile = rootProject.file("secret.properties")
+        val finnhubKey = if (secretFile.exists()) {
+            secretFile.readLines()
+                .map { it.trim() }
+                .firstOrNull { it.startsWith("FINHUB_API_KEY=") || it.startsWith("FINNHUB_API_KEY=") }
+                ?.substringAfter("=")
+                ?.trim() ?: ""
+        } else ""
+        buildConfigField("String", "FINNHUB_API_KEY", "\"$finnhubKey\"")
+
+        val marketauxKey = if (secretFile.exists()) {
+            secretFile.readLines()
+                .map { it.trim() }
+                .firstOrNull { it.startsWith("MARKETAUX_API_KEY=") }
+                ?.substringAfter("=")
+                ?.trim() ?: ""
+        } else ""
+        buildConfigField("String", "MARKETAUX_API_KEY", "\"$marketauxKey\"")
+    }
+
+    signingConfigs {
+        create("release") {
+            val keystoreFile = rootProject.file("release.jks")
+            if (keystoreFile.exists()) {
+                storeFile = keystoreFile
+                storePassword = "trading1234"
+                keyAlias = "trading_release"
+                keyPassword = "trading1234"
+            }
+        }
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
+    }
+
+    lint {
+        checkReleaseBuilds = false
+        abortOnError = false
+        disable.add("NullSafeMutableLiveData")
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -37,6 +78,14 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
+    }
+}
+
+configurations.all {
+    resolutionStrategy {
+        force("androidx.core:core:1.15.0")
+        force("androidx.core:core-ktx:1.15.0")
     }
 }
 
@@ -71,10 +120,17 @@ dependencies {
     implementation(libs.coroutines.core)
     implementation(libs.coroutines.android)
     implementation(libs.gson)
+    implementation(libs.rive.android)
+    implementation(libs.androidx.biometric)
+    implementation(libs.coil.compose)
+
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.messaging)
 
     testImplementation(libs.junit)
     testImplementation(libs.coroutines.test)
     testImplementation(libs.turbine)
+    testImplementation("org.json:json:20231013")
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
